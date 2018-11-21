@@ -1,0 +1,98 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+# ALTREP rep.int
+
+The goal of this package is to learn about ALTREP and to prototype an ALTREP version of `rep.int` for scalar values. Not meant to be used in real situations.
+
+Base's `rep.int(42, 10)` allocates an integer vector of 10 times 42.
+Using ALTREP we can construct a version of `rep.int` (called `rep_int` :)) that
+is lazy and does not allocate a full vector, yet still offers the same functionality. In case a fully expanded version of the vector is needed, it materializes it on the fly.
+
+For example: the ALTREP system has a method to ask a data structure for a value
+at a given index. Well, in this particular case the value is always the same, so we can answer this question in constant time (see below).
+
+This proof of concept is based on the examples of [Luke Tierney](https://github.com/ALTREP-examples/Rpkg-mutable/blob/master/src/mutable.c) and the blog post
+of [Romain François](https://purrple.cat/blog/2018/10/21/lazy-abs-altrep-cplusplus/).
+
+## Installation
+
+``` r
+remotes::install_github("dirkschumacher/repint")
+```
+
+## Some examples
+
+```{r example}
+library(repint)
+stopifnot(all.equal(rep.int(10, 1e6), rep_int(10, 1e6)))
+bench::mark(
+  rep.int(10, 1e6),
+  rep_int(10, 1e6)
+)
+```
+
+`head` and `sort` both work with ALTREP, so they can take advantage of the `rep_int` implementation.
+
+```{r}
+stopifnot(all.equal(head(sort(rep.int(10, 1e6))), head(sort(rep_int(10, 1e6)))))
+bench::mark(
+  head(sort(rep.int(10, 1e6))),
+  head(sort(rep_int(10, 1e6)))
+)
+```
+
+We also know that the sequence is sorted:
+
+```{r}
+is.unsorted(rep_int(42, 10))
+```
+
+It also supports materialization:
+
+```{r}
+a <- rep_int(42, 10)
+.Internal(inspect(a))
+```
+
+The second line is the description of the materialized content. Currently Nil. If you want to learn more about that approach, take a look at Romain's [blog post]((https://purrple.cat/blog/2018/10/21/lazy-abs-altrep-cplusplus/).
+
+Still lazy:
+
+```{r}
+b <- sort(a)
+.Internal(inspect(a))
+```
+
+Still lazy:
+```{r}
+a[5]
+.Internal(inspect(a))
+```
+
+Still lazy:
+```{r}
+a[4:6]
+.Internal(inspect(a))
+```
+
+
+Materialized as soon as it is printed:
+
+```{r}
+b
+.Internal(inspect(a))
+```
+
+
