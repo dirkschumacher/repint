@@ -66,7 +66,7 @@ a <- rep_int(42, 10)
 .Internal(inspect(a))
 ```
 
-The second line is the description of the materialized content. Currently Nil. If you want to learn more about that approach, take a look at Romain's [blog post]((https://purrple.cat/blog/2018/10/21/lazy-abs-altrep-cplusplus/).
+The second line is the description of the materialized content. Currently Nil. If you want to learn more about that approach, take a look at Romain's [blog post](https://purrple.cat/blog/2018/10/21/lazy-abs-altrep-cplusplus/).
 
 Still lazy:
 
