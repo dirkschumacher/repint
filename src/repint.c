@@ -27,6 +27,7 @@ static SEXP make_repint(SEXP spec) {
   SET_VECTOR_ELT(vec, 0, data);
   SET_VECTOR_ELT(vec, 1, times);
 
+  // currenlty only integers
   switch(type_data) {
     case INTSXP:
       class_t = repint_integer_class;
@@ -55,7 +56,6 @@ Rboolean repint_Inspect(SEXP x, int pre, int deep, int pvec,
   }
   return TRUE;
 }
-
 
 #define TIMES(x) INTEGER(VECTOR_ELT(R_altrep_data1(x), 1))[0]
 #define VAL(x) INTEGER(VECTOR_ELT(R_altrep_data1(x), 0))[0]
