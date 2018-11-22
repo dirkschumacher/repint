@@ -41,8 +41,8 @@ bench::mark(
 #> # A tibble: 2 x 10
 #>   expression     min    mean  median      max `itr/sec` mem_alloc  n_gc
 #>   <chr>      <bch:t> <bch:t> <bch:t> <bch:tm>     <dbl> <bch:byt> <dbl>
-#> 1 rep.int(1…  1.92ms  2.72ms  2.15ms   8.02ms      367.    7.63MB    25
-#> 2 rep_int(1… 35.63µs 42.51µs 40.48µs 342.84µs    23526.        0B    43
+#> 1 rep.int(1…  2.07ms  2.92ms  2.36ms   5.35ms      342.    7.63MB    24
+#> 2 rep_int(1… 35.77µs 43.95µs 40.84µs 375.35µs    22754.        0B    41
 #> # ... with 2 more variables: n_itr <int>, total_time <bch:tm>
 ```
 
@@ -59,8 +59,8 @@ bench::mark(
 #> # A tibble: 2 x 10
 #>   expression    min   mean median     max `itr/sec` mem_alloc  n_gc n_itr
 #>   <chr>      <bch:> <bch:> <bch:> <bch:t>     <dbl> <bch:byt> <dbl> <int>
-#> 1 head(sort… 10.1ms 10.8ms 10.7ms  12.5ms      92.2    19.1MB    22     8
-#> 2 head(sort…   58µs 69.7µs 63.5µs 788.6µs   14348.         0B    10  6808
+#> 1 head(sort… 10.1ms 11.3ms   11ms 13.38ms      88.3    19.1MB    22     8
+#> 2 head(sort… 58.5µs 70.1µs 62.5µs  2.74ms   14268.         0B     9  6745
 #> # ... with 1 more variable: total_time <bch:tm>
 ```
 
@@ -76,8 +76,8 @@ It also supports materialization:
 ``` r
 a <- rep_int(42, 10)
 .Internal(inspect(a))
-#> @7faca02e18d8 13 INTSXP g0c0 [NAM(3)]  rep.int integer lazy
-#>   @7fac9d02c0e0 00 NILSXP g1c0 [MARK,NAM(3)]
+#> @7fb0249d8a88 13 INTSXP g0c0 [NAM(3)]  rep.int integer lazy
+#>   @7fb02083e4e0 00 NILSXP g1c0 [MARK,NAM(3)]
 ```
 
 The second line is the description of the materialized content.
@@ -90,8 +90,8 @@ Still lazy:
 ``` r
 b <- sort(a)
 .Internal(inspect(a))
-#> @7faca02e18d8 13 INTSXP g0c0 [NAM(3)]  rep.int integer lazy
-#>   @7fac9d02c0e0 00 NILSXP g1c0 [MARK,NAM(3)]
+#> @7fb0249d8a88 13 INTSXP g0c0 [NAM(3)]  rep.int integer lazy
+#>   @7fb02083e4e0 00 NILSXP g1c0 [MARK,NAM(3)]
 ```
 
 Still lazy:
@@ -100,8 +100,8 @@ Still lazy:
 a[5]
 #> [1] 42
 .Internal(inspect(a))
-#> @7faca02e18d8 13 INTSXP g0c0 [NAM(3)]  rep.int integer lazy
-#>   @7fac9d02c0e0 00 NILSXP g1c0 [MARK,NAM(3)]
+#> @7fb0249d8a88 13 INTSXP g0c0 [NAM(3)]  rep.int integer lazy
+#>   @7fb02083e4e0 00 NILSXP g1c0 [MARK,NAM(3)]
 ```
 
 Still lazy:
@@ -110,8 +110,8 @@ Still lazy:
 a[4:6]
 #> [1] 42 42 42
 .Internal(inspect(a))
-#> @7faca02e18d8 13 INTSXP g0c0 [NAM(3)]  rep.int integer lazy
-#>   @7fac9d02c0e0 00 NILSXP g1c0 [MARK,NAM(3)]
+#> @7fb0249d8a88 13 INTSXP g0c0 [NAM(3)]  rep.int integer lazy
+#>   @7fb02083e4e0 00 NILSXP g1c0 [MARK,NAM(3)]
 ```
 
 Materialized as soon as it is printed:
@@ -120,6 +120,6 @@ Materialized as soon as it is printed:
 b
 #>  [1] 42 42 42 42 42 42 42 42 42 42
 .Internal(inspect(a))
-#> @7faca02e18d8 13 INTSXP g0c0 [NAM(3)]  rep.int integer materialized
-#>   @7fac9ee5d6b8 13 INTSXP g0c4 [] (len=10, tl=0) 42,42,42,42,42,...
+#> @7fb0249d8a88 13 INTSXP g0c0 [NAM(3)]  rep.int integer materialized
+#>   @7fb023b755e8 13 INTSXP g0c4 [] (len=10, tl=0) 42,42,42,42,42,...
 ```

@@ -94,8 +94,8 @@ static int repint_integer_Elt(SEXP x, R_xlen_t i) {
 static
 R_xlen_t repint_integer_Get_region(SEXP x, R_xlen_t i, R_xlen_t n, int *buf) {
   R_xlen_t ii;
-  R_xlen_t times = INTEGER(VECTOR_ELT(R_altrep_data1(x), 1))[0];
-  int val = INTEGER(VECTOR_ELT(R_altrep_data1(x), 0))[0];
+  R_xlen_t times = TIMES(x);
+  int val = VAL(x);
   R_xlen_t max_n = times < n ? times : n;
   for (ii = i; ii < max_n; ii++) {
     buf[ii] = val;
@@ -166,16 +166,16 @@ void R_init_repint(DllInfo *dll)
     R_make_altinteger_class("repint_integer", "repint", dll);
   repint_integer_class = cls;
 
-  /* override ALTREP methods */
+  // override ALTREP methods
   R_set_altrep_Duplicate_method(cls, repint_Duplicate);
   R_set_altrep_Inspect_method(cls, repint_Inspect);
   R_set_altrep_Length_method(cls, repint_Length);
 
-  /* override ALTVEC methods */
+  // override ALTVEC methods
   R_set_altvec_Dataptr_method(cls, repint_Dataptr);
   R_set_altvec_Dataptr_or_null_method(cls, repint_Dataptr_or_null);
 
-  /* override ALTINTEGER methods */
+  // override ALTINTEGER methods
   R_set_altinteger_Elt_method(cls, repint_integer_Elt);
   R_set_altinteger_Get_region_method(cls, repint_integer_Get_region);
   R_set_altinteger_Sum_method(cls, repint_integer_Sum);
