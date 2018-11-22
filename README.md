@@ -33,16 +33,16 @@ remotes::install_github("dirkschumacher/repint")
 
 ``` r
 library(repint)
-stopifnot(all.equal(rep.int(10, 1e6), rep_int(10, 1e6)))
+stopifnot(all.equal(rep.int(10L, 1e6L), rep_int(10L, 1e6L)))
 bench::mark(
-  rep.int(10, 1e6),
-  rep_int(10, 1e6)
+  rep.int(10L, 1e6L),
+  rep_int(10L, 1e6L)
 )
 #> # A tibble: 2 x 10
-#>   expression     min    mean  median      max `itr/sec` mem_alloc  n_gc
-#>   <chr>      <bch:t> <bch:t> <bch:t> <bch:tm>     <dbl> <bch:byt> <dbl>
-#> 1 rep.int(1…  2.07ms  2.92ms  2.36ms   5.35ms      342.    7.63MB    24
-#> 2 rep_int(1… 35.77µs 43.95µs 40.84µs 375.35µs    22754.        0B    41
+#>   expression    min    mean  median      max `itr/sec` mem_alloc  n_gc
+#>   <chr>      <bch:> <bch:t> <bch:t> <bch:tm>     <dbl> <bch:byt> <dbl>
+#> 1 rep.int(1…    1ms  1.83ms  1.36ms   3.89ms      547.    3.81MB    18
+#> 2 rep_int(1… 35.7µs 44.85µs 41.21µs 638.52µs    22297.        0B    40
 #> # ... with 2 more variables: n_itr <int>, total_time <bch:tm>
 ```
 
@@ -51,33 +51,33 @@ the `rep_int`
 implementation.
 
 ``` r
-stopifnot(all.equal(head(sort(rep.int(10, 1e6))), head(sort(rep_int(10, 1e6)))))
+stopifnot(all.equal(head(sort(rep.int(10L, 1e6L))), head(sort(rep_int(10L, 1e6L)))))
 bench::mark(
-  head(sort(rep.int(10, 1e6))),
-  head(sort(rep_int(10, 1e6)))
+  head(sort(rep.int(10L, 1e6L))),
+  head(sort(rep_int(10L, 1e6L)))
 )
 #> # A tibble: 2 x 10
-#>   expression    min   mean median     max `itr/sec` mem_alloc  n_gc n_itr
-#>   <chr>      <bch:> <bch:> <bch:> <bch:t>     <dbl> <bch:byt> <dbl> <int>
-#> 1 head(sort… 10.1ms 11.3ms   11ms 13.38ms      88.3    19.1MB    22     8
-#> 2 head(sort… 58.5µs 70.1µs 62.5µs  2.74ms   14268.         0B     9  6745
+#>   expression     min    mean median    max `itr/sec` mem_alloc  n_gc n_itr
+#>   <chr>      <bch:t> <bch:t> <bch:> <bch:>     <dbl> <bch:byt> <dbl> <int>
+#> 1 head(sort…  5.86ms  6.95ms  6.9ms 9.46ms      144.    11.4MB    23    34
+#> 2 head(sort… 58.63µs 81.49µs 63.5µs 1.66ms    12271.        0B     8  5854
 #> # ... with 1 more variable: total_time <bch:tm>
 ```
 
 We also know that the sequence is sorted:
 
 ``` r
-is.unsorted(rep_int(42, 10))
+is.unsorted(rep_int(42L, 10L))
 #> [1] FALSE
 ```
 
 It also supports materialization:
 
 ``` r
-a <- rep_int(42, 10)
+a <- rep_int(42L, 10L)
 .Internal(inspect(a))
-#> @7fb0249d8a88 13 INTSXP g0c0 [NAM(3)]  rep.int integer lazy
-#>   @7fb02083e4e0 00 NILSXP g1c0 [MARK,NAM(3)]
+#> @7ffb9e12aba8 13 INTSXP g0c0 [NAM(3)]  rep.int integer lazy
+#>   @7ffb9c801ee0 00 NILSXP g1c0 [MARK,NAM(3)]
 ```
 
 The second line is the description of the materialized content.
@@ -90,8 +90,8 @@ Still lazy:
 ``` r
 b <- sort(a)
 .Internal(inspect(a))
-#> @7fb0249d8a88 13 INTSXP g0c0 [NAM(3)]  rep.int integer lazy
-#>   @7fb02083e4e0 00 NILSXP g1c0 [MARK,NAM(3)]
+#> @7ffb9e12aba8 13 INTSXP g0c0 [NAM(3)]  rep.int integer lazy
+#>   @7ffb9c801ee0 00 NILSXP g1c0 [MARK,NAM(3)]
 ```
 
 Still lazy:
@@ -100,8 +100,8 @@ Still lazy:
 a[5]
 #> [1] 42
 .Internal(inspect(a))
-#> @7fb0249d8a88 13 INTSXP g0c0 [NAM(3)]  rep.int integer lazy
-#>   @7fb02083e4e0 00 NILSXP g1c0 [MARK,NAM(3)]
+#> @7ffb9e12aba8 13 INTSXP g0c0 [NAM(3)]  rep.int integer lazy
+#>   @7ffb9c801ee0 00 NILSXP g1c0 [MARK,NAM(3)]
 ```
 
 Still lazy:
@@ -110,8 +110,8 @@ Still lazy:
 a[4:6]
 #> [1] 42 42 42
 .Internal(inspect(a))
-#> @7fb0249d8a88 13 INTSXP g0c0 [NAM(3)]  rep.int integer lazy
-#>   @7fb02083e4e0 00 NILSXP g1c0 [MARK,NAM(3)]
+#> @7ffb9e12aba8 13 INTSXP g0c0 [NAM(3)]  rep.int integer lazy
+#>   @7ffb9c801ee0 00 NILSXP g1c0 [MARK,NAM(3)]
 ```
 
 Materialized as soon as it is printed:
@@ -120,6 +120,6 @@ Materialized as soon as it is printed:
 b
 #>  [1] 42 42 42 42 42 42 42 42 42 42
 .Internal(inspect(a))
-#> @7fb0249d8a88 13 INTSXP g0c0 [NAM(3)]  rep.int integer materialized
-#>   @7fb023b755e8 13 INTSXP g0c4 [] (len=10, tl=0) 42,42,42,42,42,...
+#> @7ffb9e12aba8 13 INTSXP g0c0 [NAM(3)]  rep.int integer materialized
+#>   @7ffb9c471e58 13 INTSXP g0c4 [] (len=10, tl=0) 42,42,42,42,42,...
 ```

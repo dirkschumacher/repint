@@ -36,33 +36,33 @@ remotes::install_github("dirkschumacher/repint")
 
 ```{r example}
 library(repint)
-stopifnot(all.equal(rep.int(10, 1e6), rep_int(10, 1e6)))
+stopifnot(all.equal(rep.int(10L, 1e6L), rep_int(10L, 1e6L)))
 bench::mark(
-  rep.int(10, 1e6),
-  rep_int(10, 1e6)
+  rep.int(10L, 1e6L),
+  rep_int(10L, 1e6L)
 )
 ```
 
 `head` and `sort` both work with ALTREP, so they can take advantage of the `rep_int` implementation.
 
 ```{r}
-stopifnot(all.equal(head(sort(rep.int(10, 1e6))), head(sort(rep_int(10, 1e6)))))
+stopifnot(all.equal(head(sort(rep.int(10L, 1e6L))), head(sort(rep_int(10L, 1e6L)))))
 bench::mark(
-  head(sort(rep.int(10, 1e6))),
-  head(sort(rep_int(10, 1e6)))
+  head(sort(rep.int(10L, 1e6L))),
+  head(sort(rep_int(10L, 1e6L)))
 )
 ```
 
 We also know that the sequence is sorted:
 
 ```{r}
-is.unsorted(rep_int(42, 10))
+is.unsorted(rep_int(42L, 10L))
 ```
 
 It also supports materialization:
 
 ```{r}
-a <- rep_int(42, 10)
+a <- rep_int(42L, 10L)
 .Internal(inspect(a))
 ```
 
